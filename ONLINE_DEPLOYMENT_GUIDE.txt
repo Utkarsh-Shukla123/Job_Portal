@@ -1,0 +1,83 @@
+================================================================================
+               JOBPULSE AI - ONLINE DEPLOYMENT & HOSTING GUIDE
+================================================================================
+
+This document explains how to deploy the Job Search Portal and JobSpy backend online 
+so anyone can access it via a web URL (URL link).
+
+--------------------------------------------------------------------------------
+METHOD 1: RENDER.COM (FREE PYTHON SERVER HOSTING - RECOMMENDED)
+--------------------------------------------------------------------------------
+
+Render provides free hosting for Python web applications with automatic SSL/HTTPS.
+
+Steps:
+1. Push your project files (app.py, scraper.py, index.html, style.css, app.js, 
+   pyproject.toml / requirements.txt) to a GitHub repository.
+
+2. Create a file named 'requirements.txt' in the project root containing:
+   python-jobspy
+   pandas
+
+3. Log in to Render (https://render.com) and click 'New +' -> 'Web Service'.
+
+4. Connect your GitHub repository.
+
+5. Configure settings:
+   - Name: jobpulse-portal
+   - Environment: Python 3
+   - Build Command: pip install -r requirements.txt
+   - Start Command: python app.py
+
+6. Click 'Create Web Service'. Render will build and deploy your portal live at:
+   https://jobpulse-portal.onrender.com
+
+--------------------------------------------------------------------------------
+METHOD 2: REPLIT (INSTANT 1-CLICK CLOUD IDE & HOSTING)
+--------------------------------------------------------------------------------
+
+Replit allows running Python + Web frontend directly in your browser with zero setup.
+
+Steps:
+1. Go to https://replit.com and click '+ Create Repl'.
+2. Select 'Python' template and name it 'JobPulse-Portal'.
+3. Upload project files: app.py, scraper.py, index.html, style.css, app.js, jobs_output.csv.
+4. Open Replit Shell and run:
+   pip install python-jobspy pandas
+5. Click 'Run' button at top. Replit will launch the app and generate a live URL:
+   https://JobPulse-Portal.<your-username>.repl.co
+
+--------------------------------------------------------------------------------
+METHOD 3: GITHUB PAGES (FREE STATIC WEB APP HOSTING)
+--------------------------------------------------------------------------------
+
+If you want to host only the Web Application UI (offline mode with CSV drag-and-drop):
+
+Steps:
+1. Push project files to a public GitHub repository.
+2. In GitHub, go to Repository Settings -> Pages.
+3. Under 'Source', select 'main' branch and root '/' folder.
+4. Click 'Save'. Your portal UI will be live at:
+   https://<your-username>.github.io/<repository-name>/
+5. Users can upload any 'jobs_output.csv' file directly into the browser.
+
+--------------------------------------------------------------------------------
+METHOD 4: PYTHONANYWHERE (FREE HOSTING)
+--------------------------------------------------------------------------------
+
+1. Sign up at https://www.pythonanywhere.com
+2. Upload files via Dashboard or Git clone.
+3. Install dependencies in bash console:
+   pip install --user python-jobspy pandas
+4. Set up Web app pointing to app.py.
+
+--------------------------------------------------------------------------------
+TROUBLESHOOTING & ONLINE BEST PRACTICES:
+--------------------------------------------------------------------------------
+- PROXIES: When running scrapers online on public cloud IPs (Render/Replit), 
+  LinkedIn or Indeed may rate-limit requests. You can add proxy IPs in scraper.py 
+  to bypass blocklists.
+- DATA PERSISTENCE: Saved jobs are persisted in the user's browser localStorage, 
+  so user bookmarks remain intact across browser reloads.
+
+================================================================================

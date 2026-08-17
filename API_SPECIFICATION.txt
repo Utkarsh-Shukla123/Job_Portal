@@ -1,0 +1,81 @@
+================================================================================
+                    JOBPULSE AI - REST API SPECIFICATION
+================================================================================
+
+BASE URL: http://localhost:8000 (or your hosted domain)
+
+--------------------------------------------------------------------------------
+1. GET /api/jobs
+--------------------------------------------------------------------------------
+Description: Returns all scraped job postings currently loaded in the system.
+Response Format: JSON
+
+Sample Response:
+{
+  "status": "success",
+  "count": 620,
+  "jobs": [
+    {
+      "id": "in-c4456e214042ec5b",
+      "site": "indeed",
+      "title": "Software Engineer Intern",
+      "company": "ByteDance",
+      "location": "San Jose, CA, US",
+      "date_posted": "2026-08-17",
+      "job_type": "internship",
+      "salaryText": "Hourly",
+      "is_remote": false,
+      "job_url": "https://www.indeed.com/viewjob?jk=c4456e214042ec5b"
+    }
+  ]
+}
+
+--------------------------------------------------------------------------------
+2. POST /api/scrape
+--------------------------------------------------------------------------------
+Description: Triggers background JobSpy scraping across selected job boards.
+Content-Type: application/json
+
+Request Payload:
+{
+  "search_term": "Software Engineer",
+  "location": "San Francisco, CA",
+  "results_wanted": 10,
+  "hours_old": 72,
+  "is_remote": true,
+  "site_name": ["indeed", "linkedin", "zip_recruiter"]
+}
+
+Sample Response:
+{
+  "status": "success",
+  "message": "Successfully scraped 30 jobs!",
+  "count": 30,
+  "jobs": [ ... ]
+}
+
+--------------------------------------------------------------------------------
+3. GET /api/stats
+--------------------------------------------------------------------------------
+Description: Returns aggregated market statistics and analytics metrics.
+Response Format: JSON
+
+Sample Response:
+{
+  "status": "success",
+  "stats": {
+    "total_jobs": 620,
+    "site_distribution": { "indeed": 300, "linkedin": 200, "zip_recruiter": 120 },
+    "remote_count": 180,
+    "onsite_count": 440,
+    "avg_salary": 135000.0,
+    "top_skills": { "Python": 140, "React": 95, "SQL": 88, "AWS": 72 }
+  }
+}
+
+--------------------------------------------------------------------------------
+4. GET /api/export?format=csv (or format=json)
+--------------------------------------------------------------------------------
+Description: Downloads the full job dataset as an attachment file.
+
+================================================================================

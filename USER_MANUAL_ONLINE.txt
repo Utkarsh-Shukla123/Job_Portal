@@ -1,0 +1,70 @@
+================================================================================
+                    JOBPULSE AI - COMPLETE USER MANUAL
+================================================================================
+
+WELCOME TO JOBPULSE AI!
+This manual provides a detailed walkthrough of all features in the Job Search Portal.
+
+--------------------------------------------------------------------------------
+1. EXPLORE JOBS TAB (MAIN FEED)
+--------------------------------------------------------------------------------
+- GLOBAL SEARCH BAR: Enter any job title (e.g. "Software Engineer", "Product Designer"),
+  tech stack keyword ("Python", "React", "AWS"), or company name ("ByteDance", "Google").
+- LOCATION FILTER: Enter city, state, or "Remote" to filter listings geographically.
+- PLATFORM SELECTOR: Toggle job sources between Indeed, LinkedIn, ZipRecruiter, Glassdoor.
+- JOB TYPE SELECTOR: Filter by Full-Time, Part-Time, Contract, or Internship.
+- WORKPLACE FILTER: Instantly isolate Remote-Only roles vs On-Site/Hybrid roles.
+- SORTING: Sort listings by Newest Posted, Highest Salary, or Title A-Z.
+- QUICK PRESET TAGS: Click quick chips like '🚀 Remote Engineer' or '💰 $100k+ Salary'.
+- VIEW MODE TOGGLE: Switch between Grid Cards View and Compact Table View.
+
+--------------------------------------------------------------------------------
+2. JOB DETAILS & DIRECT APPLY
+--------------------------------------------------------------------------------
+- Click 'View Details' on any job card to open the complete Job Details Modal.
+- View salary breakdowns, contact email, posting age, and workplace type.
+- SKILLS TAGS: Automatically extracted skill tags (Python, React, SQL, Docker, etc.).
+- FULL DESCRIPTION: Scroll through the raw formatted job description.
+- DIRECT APPLY BUTTON: Click 'Apply Directly on Platform' to open the original posting 
+  URL on Indeed, LinkedIn, or ZipRecruiter.
+
+--------------------------------------------------------------------------------
+3. ANALYTICS & INSIGHTS DASHBOARD
+--------------------------------------------------------------------------------
+- KPI METRICS: Real-time calculation of total active listings, average annual salary, 
+  remote ratio percentage, and top scraped job board.
+- SALARY DISTRIBUTION CHART: Visual bar graph of salary ranges ($50k-$80k up to $170k+).
+- PLATFORM BREAKDOWN: Donut chart showing distribution across LinkedIn vs Indeed vs ZipRecruiter.
+- TOP IN-DEMAND SKILLS: Horizontal bar chart showing the top 10 most requested skills.
+- WORKPLACE RATIO: Pie chart comparing Remote vs On-Site opportunities.
+
+--------------------------------------------------------------------------------
+4. SAVED APPLICATIONS TRACKER
+--------------------------------------------------------------------------------
+- BOOKMARKING: Click the bookmark ribbon on any job card to save it.
+- APPLICATION PIPELINE STAGES: Categorize applications into:
+  * 📌 Saved
+  * 📩 Applied
+  * 🎯 Interviewing
+  * 🎉 Offered
+- PRIVATE NOTES: Add custom notes (e.g., "Interviewer name: John, follow up on Friday").
+- PERSISTENCE: Data automatically persists in browser storage (localStorage).
+
+--------------------------------------------------------------------------------
+5. LIVE SCRAPER CONTROL PANEL
+--------------------------------------------------------------------------------
+- Configure dynamic job scrapers in real time:
+  * Search Keyword & Location
+  * Results count per site (1-50)
+  * Posting age window (Hours old, default 72h)
+  * Target site checkboxes (Indeed, LinkedIn, ZipRecruiter, Glassdoor)
+  * Remote-only checkbox
+- Output Console Terminal displays live progress logs and status feedback.
+
+--------------------------------------------------------------------------------
+6. DATASET IMPORT & EXPORT SUITE
+--------------------------------------------------------------------------------
+- UPLOAD CSV: Click 'Upload CSV' in top navbar to load any custom job CSV dataset.
+- EXPORT DATA: Click 'Export Data' to download the active filtered dataset as a CSV file.
+
+================================================================================

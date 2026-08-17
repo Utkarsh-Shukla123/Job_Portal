@@ -1,0 +1,63 @@
+================================================================================
+                    JOBPULSE AI - QUICK START GUIDE
+================================================================================
+
+OVERVIEW:
+JobPulse AI is a complete Job Search & Multi-Board Scraper Portal powered by Python 
+and JobSpy. It scrapes job listings concurrently from LinkedIn, Indeed, ZipRecruiter,
+Glassdoor, & Google Jobs.
+
+--------------------------------------------------------------------------------
+OPTION 1: RUNNING LOCALLY (1-CLICK COMMAND)
+--------------------------------------------------------------------------------
+
+1. Open your terminal in the project directory:
+   cd d:\Downloads\JOB_SEARCH_PORTAL
+
+2. Run the application server using Python:
+   .\.venv\Scripts\python.exe app.py
+   (or 'python app.py' if Python is in your PATH)
+
+3. Open your web browser and navigate to:
+   http://localhost:8000
+
+4. Features available immediately:
+   - Search & Filter 600+ scraped jobs from jobs_output.csv
+   - View detailed job descriptions & salary distributions
+   - Run live background job scrapes across LinkedIn, Indeed, ZipRecruiter
+   - Track saved applications (Saved, Applied, Interviewing, Offered)
+   - Upload custom CSV datasets or export filtered data to CSV/JSON
+
+--------------------------------------------------------------------------------
+OPTION 2: RUNNING SCRAPER FROM COMMAND LINE (CLI)
+--------------------------------------------------------------------------------
+
+You can also run the scraper independently from the terminal:
+
+- Scrape 10 Software Engineer jobs in San Francisco:
+  .\.venv\Scripts\python.exe scraper.py --search "Software Engineer" --location "San Francisco, CA" --results 10
+
+- Scrape Remote Python Developer jobs:
+  .\.venv\Scripts\python.exe scraper.py --search "Python Developer" --remote --results 15
+
+- Scrape Internship roles on LinkedIn & Indeed:
+  .\.venv\Scripts\python.exe scraper.py --search "Data Analyst" --type internship --sites indeed linkedin
+
+Output datasets are automatically saved to 'jobs_output.csv' and 'jobs_output.json'.
+
+--------------------------------------------------------------------------------
+FILE STRUCTURE SUMMARY:
+--------------------------------------------------------------------------------
+- app.py                      : Python Web Server & API backend
+- scraper.py                  : JobSpy multi-board scraper CLI & engine
+- index.html                  : Main Web Application UI
+- style.css                   : Modern Glassmorphic Dark Theme stylesheet
+- app.js                      : Client-side interactive app logic & charts
+- jobs_output.csv             : Scraped job dataset CSV
+- jobs_output.json            : Scraped job dataset JSON
+- QUICK_START.txt             : This quick start guide
+- ONLINE_DEPLOYMENT_GUIDE.txt : Step-by-step guide to hosting online
+- USER_MANUAL_ONLINE.txt      : Complete feature & usage guide
+- API_SPECIFICATION.txt       : API endpoints reference
+
+================================================================================

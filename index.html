@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobPulse - AI Job Search & Scraper Portal</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- PapaParse for Client-side CSV Parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+    <div class="app-container">
+        <!-- Top Navbar -->
+        <header class="navbar">
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-briefcase"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>JobPulse <span>AI</span></h1>
+                    <p class="tagline">Multi-Board Scraper & Analytics Portal</p>
+                </div>
+            </div>
+
+            <nav class="nav-tabs">
+                <button class="nav-btn active" data-tab="tab-explore">
+                    <i class="fa-solid fa-compass"></i> Explore Jobs
+                </button>
+                <button class="nav-btn" data-tab="tab-analytics">
+                    <i class="fa-solid fa-chart-pie"></i> Analytics & Insights
+                </button>
+                <button class="nav-btn" data-tab="tab-saved">
+                    <i class="fa-solid fa-bookmark"></i> Application Tracker <span class="badge" id="saved-count-badge">0</span>
+                </button>
+                <button class="nav-btn" data-tab="tab-scraper">
+                    <i class="fa-solid fa-bolt"></i> Live Scraper Panel
+                </button>
+            </nav>
+
+            <div class="navbar-actions">
+                <div class="status-indicator">
+                    <span class="pulse-dot"></span>
+                    <span id="data-status-text">Loaded 0 Jobs</span>
+                </div>
+                <button class="btn btn-secondary btn-sm" id="btn-upload-trigger">
+                    <i class="fa-solid fa-upload"></i> Upload CSV
+                </button>
+                <button class="btn btn-outline btn-sm" id="btn-export-trigger">
+                    <i class="fa-solid fa-download"></i> Export Data
+                </button>
+                <input type="file" id="csv-file-input" accept=".csv" style="display: none;">
+            </div>
+        </header>
+
+        <!-- Main Body Content -->
+        <main class="main-content">
+            <!-- TAB 1: EXPLORE JOBS -->
+            <section id="tab-explore" class="tab-pane active">
+                <!-- Search & Filters Container -->
+                <div class="search-hero">
+                    <div class="search-bar-wrapper">
+                        <div class="search-input-group">
+                            <i class="fa-solid fa-magnifying-glass input-icon"></i>
+                            <input type="text" id="filter-keyword" placeholder="Search by Job Title, Keyword, Tech Stack or Company...">
+                        </div>
+
+                        <div class="search-input-group location-group">
+                            <i class="fa-solid fa-location-dot input-icon"></i>
+                            <input type="text" id="filter-location" placeholder="City, State, Country or Remote...">
+                        </div>
+
+                        <button class="btn btn-primary" id="btn-apply-filters">
+                            <i class="fa-solid fa-filter"></i> Search Jobs
+                        </button>
+                    </div>
+
+                    <!-- Filter Chips Bar -->
+                    <div class="filter-controls-row">
+                        <div class="filter-dropdowns">
+                            <!-- Site Selector -->
+                            <div class="custom-select">
+                                <label><i class="fa-solid fa-globe"></i> Platform:</label>
+                                <select id="filter-site">
+                                    <option value="all">All Job Boards</option>
+                                    <option value="indeed">Indeed</option>
+                                    <option value="linkedin">LinkedIn</option>
+                                    <option value="zip_recruiter">ZipRecruiter</option>
+                                    <option value="glassdoor">Glassdoor</option>
+                                </select>
+                            </div>
+
+                            <!-- Job Type Selector -->
+                            <div class="custom-select">
+                                <label><i class="fa-solid fa-clock"></i> Job Type:</label>
+                                <select id="filter-type">
+                                    <option value="all">All Types</option>
+                                    <option value="fulltime">Full-Time</option>
+                                    <option value="parttime">Part-Time</option>
+                                    <option value="contract">Contract</option>
+                                    <option value="internship">Internship</option>
+                                </select>
+                            </div>
+
+                            <!-- Workplace Type Selector -->
+                            <div class="custom-select">
+                                <label><i class="fa-solid fa-house-laptop"></i> Workplace:</label>
+                                <select id="filter-remote">
+                                    <option value="all">Any Location</option>
+                                    <option value="remote">Remote Only</option>
+                                    <option value="onsite">On-Site / Hybrid</option>
+                                </select>
+                            </div>
+
+                            <!-- Sort By Selector -->
+                            <div class="custom-select">
+                                <label><i class="fa-solid fa-arrow-down-wide-short"></i> Sort By:</label>
+                                <select id="filter-sort">
+                                    <option value="newest">Newest First</option>
+                                    <option value="salary-high">Salary: High to Low</option>
+                                    <option value="title">Title: A-Z</option>
+                                    <option value="company">Company: A-Z</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Quick Presets -->
+                        <div class="quick-presets">
+                            <span class="preset-label">Quick Tags:</span>
+                            <button class="chip-btn" data-preset="remote-eng">🚀 Remote Engineer</button>
+                            <button class="chip-btn" data-preset="python-dev">🐍 Python</button>
+                            <button class="chip-btn" data-preset="intern">🎓 Internships</button>
+                            <button class="chip-btn" data-preset="high-sal">💰 $100k+ Salary</button>
+                            <button class="chip-btn reset-chip" id="btn-reset-filters"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feed Header Controls -->
+                <div class="feed-header">
+                    <div class="feed-count">
+                        Showing <strong id="showing-count">0</strong> matching job postings
+                    </div>
+
+                    <div class="view-toggle-mode">
+                        <button class="toggle-btn active" id="view-grid-btn" title="Grid View">
+                            <i class="fa-solid fa-table-cells-large"></i> Grid
+                        </button>
+                        <button class="toggle-btn" id="view-list-btn" title="List View">
+                            <i class="fa-solid fa-list-check"></i> Compact Table
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Job Grid Container -->
+                <div id="jobs-container" class="jobs-grid">
+                    <!-- Dynamic Job Cards render here -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="empty-state hidden">
+                    <div class="empty-icon"><i class="fa-solid fa-folder-open"></i></div>
+                    <h3>No jobs found matching your criteria</h3>
+                    <p>Try clearing filters or trigger a live scrape to pull fresh jobs.</p>
+                    <button class="btn btn-primary" id="btn-empty-scrape">
+                        <i class="fa-solid fa-bolt"></i> Launch Live Job Scraper
+                    </button>
+                </div>
+            </section>
+
+            <!-- TAB 2: ANALYTICS & INSIGHTS -->
+            <section id="tab-analytics" class="tab-pane">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-chart-line"></i> Job Market Analytics & Insights</h2>
+                    <p>Real-time salary breakdowns, top skill metrics, and platform distributions.</p>
+                </div>
+
+                <!-- KPI Metric Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon bg-indigo"><i class="fa-solid fa-briefcase"></i></div>
+                        <div class="kpi-content">
+                            <span class="kpi-title">Total Active Listings</span>
+                            <h3 class="kpi-value" id="kpi-total-jobs">0</h3>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon bg-emerald"><i class="fa-solid fa-sack-dollar"></i></div>
+                        <div class="kpi-content">
+                            <span class="kpi-title">Avg Annual Salary</span>
+                            <h3 class="kpi-value" id="kpi-avg-salary">$0</h3>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon bg-cyan"><i class="fa-solid fa-laptop-house"></i></div>
+                        <div class="kpi-content">
+                            <span class="kpi-title">Remote Job Ratio</span>
+                            <h3 class="kpi-value" id="kpi-remote-ratio">0%</h3>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon bg-purple"><i class="fa-solid fa-award"></i></div>
+                        <div class="kpi-content">
+                            <span class="kpi-title">Top Scraped Platform</span>
+                            <h3 class="kpi-value" id="kpi-top-platform">-</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Container -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3><i class="fa-solid fa-money-bill-wave"></i> Salary Distribution (Annual USD)</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-salary"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3><i class="fa-solid fa-pie-chart"></i> Jobs by Platform Board</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-platform"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3><i class="fa-solid fa-code"></i> Top 10 In-Demand Skills</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-skills"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3><i class="fa-solid fa-building-user"></i> Workplace Type (Remote vs Onsite)</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-workplace"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: SAVED APPLICATIONS TRACKER -->
+            <section id="tab-saved" class="tab-pane">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-clipboard-check"></i> Application Tracker & Bookmarks</h2>
+                    <p>Track your saved job listings, interview stages, and custom application notes.</p>
+                </div>
+
+                <div class="saved-pipeline-bar">
+                    <div class="pipeline-stat active-filter" data-status-filter="all">
+                        <span>All Bookmarked</span>
+                        <strong id="pipe-count-all">0</strong>
+                    </div>
+                    <div class="pipeline-stat" data-status-filter="Saved">
+                        <span>📌 Saved</span>
+                        <strong id="pipe-count-saved">0</strong>
+                    </div>
+                    <div class="pipeline-stat" data-status-filter="Applied">
+                        <span>📩 Applied</span>
+                        <strong id="pipe-count-applied">0</strong>
+                    </div>
+                    <div class="pipeline-stat" data-status-filter="Interviewing">
+                        <span>🎯 Interviewing</span>
+                        <strong id="pipe-count-interviewing">0</strong>
+                    </div>
+                    <div class="pipeline-stat" data-status-filter="Offered">
+                        <span>🎉 Offered</span>
+                        <strong id="pipe-count-offered">0</strong>
+                    </div>
+                </div>
+
+                <div id="saved-jobs-container" class="saved-table-container">
+                    <!-- Dynamic Saved Items rendered here -->
+                </div>
+
+                <div id="saved-empty-state" class="empty-state">
+                    <div class="empty-icon"><i class="fa-regular fa-bookmark"></i></div>
+                    <h3>No saved applications yet</h3>
+                    <p>Click the bookmark icon on any job card to add it to your tracking dashboard.</p>
+                </div>
+            </section>
+
+            <!-- TAB 4: LIVE SCRAPER PANEL -->
+            <section id="tab-scraper" class="tab-pane">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-bolt"></i> Live JobSpy Scraper Dashboard</h2>
+                    <p>Trigger real-time background scraping across LinkedIn, Indeed, ZipRecruiter, & Glassdoor.</p>
+                </div>
+
+                <div class="scraper-layout">
+                    <div class="scraper-form-card">
+                        <h3>Scraper Configuration</h3>
+
+                        <form id="scraper-form">
+                            <div class="form-group">
+                                <label for="scrape-search">Search Keyword / Role</label>
+                                <input type="text" id="scrape-search" value="Software Engineer" placeholder="e.g. Software Engineer, Data Scientist, Product Manager" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="scrape-location">Location</label>
+                                <input type="text" id="scrape-location" value="San Francisco, CA" placeholder="e.g. San Francisco, CA, New York, NY, Remote" required>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="scrape-results">Results Per Site</label>
+                                    <input type="number" id="scrape-results" value="5" min="1" max="50">
+                                </div>
+                                <div class="form-group">
+                                    <label for="scrape-hours">Posting Age (Hours)</label>
+                                    <input type="number" id="scrape-hours" value="72" min="1" max="720">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Target Job Boards</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-label"><input type="checkbox" name="scrape-site" value="indeed" checked> Indeed</label>
+                                    <label class="checkbox-label"><input type="checkbox" name="scrape-site" value="linkedin" checked> LinkedIn</label>
+                                    <label class="checkbox-label"><input type="checkbox" name="scrape-site" value="zip_recruiter" checked> ZipRecruiter</label>
+                                    <label class="checkbox-label"><input type="checkbox" name="scrape-site" value="glassdoor"> Glassdoor</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="scrape-remote"> Remote Jobs Only
+                                </label>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block btn-lg" id="btn-start-scrape">
+                                <i class="fa-solid fa-play"></i> Run Live Job Scraper
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Scraper Logs & Execution Card -->
+                    <div class="scraper-log-card">
+                        <div class="log-header">
+                            <h3><i class="fa-solid fa-terminal"></i> Scraper Execution Output Log</h3>
+                            <button class="btn btn-outline btn-sm" id="btn-clear-log"><i class="fa-solid fa-eraser"></i> Clear</button>
+                        </div>
+                        <div class="terminal-window" id="scraper-log-terminal">
+                            <div class="log-line info">[SYSTEM] JobPulse Scraper Ready. Adjust parameters and click 'Run Live Job Scraper'.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- JOB DETAILS MODAL -->
+        <div id="job-modal" class="modal">
+            <div class="modal-content glass-card">
+                <button class="modal-close" id="modal-close-btn">&times;</button>
+                
+                <div class="modal-header">
+                    <div class="company-badge-lg" id="modal-company-logo">
+                        <span id="modal-logo-text">JP</span>
+                    </div>
+                    <div class="modal-title-area">
+                        <h2 id="modal-job-title">Job Title</h2>
+                        <div class="modal-meta-row">
+                            <span id="modal-company-name"><i class="fa-solid fa-building"></i> Company</span>
+                            <span id="modal-location"><i class="fa-solid fa-location-dot"></i> Location</span>
+                            <span id="modal-posted-date"><i class="fa-solid fa-calendar-day"></i> Date</span>
+                            <span id="modal-platform" class="badge">Indeed</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-body">
+                    <div class="modal-details-grid">
+                        <div class="detail-box">
+                            <span class="detail-label">Salary Range</span>
+                            <strong class="detail-val" id="modal-salary">Not specified</strong>
+                        </div>
+                        <div class="detail-box">
+                            <span class="detail-label">Job Type</span>
+                            <strong class="detail-val" id="modal-job-type">Full-Time</strong>
+                        </div>
+                        <div class="detail-box">
+                            <span class="detail-label">Workplace</span>
+                            <strong class="detail-val" id="modal-work-type">On-Site</strong>
+                        </div>
+                        <div class="detail-box">
+                            <span class="detail-label">Contact Email</span>
+                            <strong class="detail-val" id="modal-email">N/A</strong>
+                        </div>
+                    </div>
+
+                    <div class="modal-skills-section">
+                        <h4>Required Skills & Tech Stack</h4>
+                        <div class="tags-container" id="modal-skills-tags">
+                            <!-- Skill tags -->
+                        </div>
+                    </div>
+
+                    <div class="modal-description-section">
+                        <h4>Full Job Description</h4>
+                        <div class="description-text" id="modal-description">
+                            Description text goes here...
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-outline" id="modal-save-btn">
+                        <i class="fa-regular fa-bookmark"></i> Save Application
+                    </button>
+                    <a href="#" target="_blank" class="btn btn-primary" id="modal-apply-btn">
+                        <i class="fa-solid fa-paper-plane"></i> Apply Directly on Platform
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- App JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>

@@ -212,10 +212,17 @@ class JobPortalRequestHandler(SimpleHTTPRequestHandler):
         self.end_headers()
 
 def main():
+    if sys.platform == "win32":
+        try:
+            sys.stdout.reconfigure(encoding='utf-8')
+            sys.stderr.reconfigure(encoding='utf-8')
+        except Exception:
+            pass
+
     print("=" * 60)
-    print(f"🚀 Job Search Portal Server running on http://localhost:{PORT}")
-    print(f"📂 Serving workspace: {BASE_DIR}")
-    print(f"📊 Live endpoints: /api/jobs | /api/stats | /api/scrape | /api/export")
+    print(f"[START] Job Search Portal Server running on http://localhost:{PORT}")
+    print(f"[PATH]  Serving workspace: {BASE_DIR}")
+    print(f"[ENDPOINTS] Live API: /api/jobs | /api/stats | /api/scrape | /api/export")
     print("=" * 60)
     
     server = HTTPServer(("0.0.0.0", PORT), JobPortalRequestHandler)

@@ -61,20 +61,24 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- Data Fetching ---
     async function loadInitialData() {
         logTerminal("[SYSTEM] Fetching job dataset from API server...", "info");
-        try {
-            const response = await fetch("/api/jobs");
-            if (response.ok) {
-                const data = await response.json();
-                if (data.jobs && data.jobs.length > 0) {
-                    state.jobs = cleanJobsData(data.jobs);
-                    logTerminal(`[SYSTEM] Loaded ${state.jobs.length} jobs from server backend.`, "success");
-                    applyFiltersAndRender();
-                    renderAnalytics();
-                    return;
+        const apiEndpoints = ["/api/jobs", "http://localhost:8000/api/jobs"];
+        
+        for (const endpoint of apiEndpoints) {
+            try {
+                const response = await fetch(endpoint);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.jobs && data.jobs.length > 0) {
+                        state.jobs = cleanJobsData(data.jobs);
+                        logTerminal(`[SYSTEM] Loaded ${state.jobs.length} jobs from server backend (${endpoint}).`, "success");
+                        applyFiltersAndRender();
+                        renderAnalytics();
+                        return;
+                    }
                 }
+            } catch (e) {
+                console.warn(`API fetch from ${endpoint} failed`, e);
             }
-        } catch (e) {
-            console.warn("API server fetch failed, trying local fallback", e);
         }
 
         // Fallback: Check if PapaParse can fetch local jobs_output.csv directly
@@ -612,35 +616,46 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.disabled = true;
         btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Scraping Live Jobs...`;
 
-        try {
-            const res = await fetch("/api/scrape", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    search_term: search,
-                    location: location,
-                    results_wanted: results,
-                    hours_old: hours,
-                    is_remote: remote,
-                    site_name: sites
-                })
-            });
+        const scrapeEndpoints = ["/api/scrape", "http://localhost:8000/api/scrape"];
+        let success = false;
 
-            if (res.ok) {
-                const result = await res.json();
-                logTerminal(`[SCRAPER] ${result.message}`, "success");
-                if (result.jobs) {
-                    state.jobs = cleanJobsData(result.jobs);
-                    applyFiltersAndRender();
-                    renderAnalytics();
-                    logTerminal(`[SYSTEM] Feed updated with ${state.jobs.length} jobs.`, "success");
+        const payload = JSON.stringify({
+            search_term: search,
+            location: location,
+            results_wanted: results,
+            hours_old: hours,
+            is_remote: remote,
+            site_name: sites
+        });
+
+        for (const endpoint of scrapeEndpoints) {
+            try {
+                const res = await fetch(endpoint, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: payload
+                });
+
+                if (res.ok) {
+                    const result = await res.json();
+                    logTerminal(`[SCRAPER] ${result.message}`, "success");
+                    if (result.jobs) {
+                        state.jobs = cleanJobsData(result.jobs);
+                        applyFiltersAndRender();
+                        renderAnalytics();
+                        logTerminal(`[SYSTEM] Feed updated with ${state.jobs.length} jobs.`, "success");
+                    }
+                    success = true;
+                    break;
                 }
-            } else {
-                throw new Error("Scraper API endpoint returned error.");
+            } catch (err) {
+                console.warn(`Scraper API endpoint ${endpoint} unreachable:`, err);
             }
-        } catch (err) {
-            logTerminal(`[SCRAPER ERROR] ${err.message}`, "error");
-            logTerminal(`[TIP] Ensure 'python app.py' is running locally on port 8000.`, "warn");
+        }
+
+        if (!success) {
+            logTerminal(`[SCRAPER ERROR] Could not connect to Python backend server.`, "error");
+            logTerminal(`[TIP] Ensure backend is running with '.\\.venv\\Scripts\\python.exe app.py' on port 8000.`, "warn");
         } finally {
             btn.disabled = false;
             btn.innerHTML = `<i class="fa-solid fa-play"></i> Run Live Job Scraper`;
